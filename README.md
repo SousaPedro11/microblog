@@ -15,4 +15,4 @@
   * flask-wtf
   * flask-sqlalchemy
   * flask-migrate
-  * [WWW SQL Designer](https://ondras.zarovi.cz/sql/demo/)
+  * [WWW SQL Designer](https://ondras.zarovi.cz/sql/demo/){:target="_blank"}

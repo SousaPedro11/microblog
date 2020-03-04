@@ -1,6 +1,13 @@
 <table>
     <tr style="vertical-align: top">
-        <td><img src="{{ post.author.avatar(36) }}"></td>
-        <td>{{ post.author.username }} says: <br>{{ post.body }}<br>{{ post.hora }}</td>
+        <td>
+            <img src="{{ post.author.avatar(36) }}">
+        </td>
+        <td>
+            {{ post.author.username }} says: <br>{{ post.body }}<br>
+            <div style="font-size: smaller">
+                {{ timestamp_to_string(post.hora) }}
+            </div>
+        </td>
     </tr>
 </table>

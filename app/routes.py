@@ -1,11 +1,20 @@
+from datetime import datetime
+
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
-from app import app, DAO
+from app import app, DAO, db
 from app.DAO import transacao
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
 from app.models import User
+
+
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 
 @app.route('/')
@@ -13,8 +22,10 @@ from app.models import User
 @login_required
 def index():
     users = DAO.buscar_todos(User)
-    posts = sorted([{'author': p.author, 'body': p.body, 'hora': p.timestamp} for user in users for p in user.posts],
-                   key=lambda i: (i['hora']))
+    posts = sorted(
+        [{'author': p.author, 'body': p.body, 'hora': p.timestamp} for user in users for p in
+         user.posts],
+        key=lambda i: (i['hora']))
     return render_template('index.html', title='Home', posts=posts)
 
 
@@ -75,3 +86,18 @@ def user(username):
                    key=lambda i: (i['hora']))
 
     return render_template('user.html', user=user, posts=posts)
+
+
+@app.route('/edit_profile/', methods=['GET', 'POST'])
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash('Your changes have been saved')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', title='Edit Profile', form=form)

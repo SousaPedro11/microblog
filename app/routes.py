@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 
-from app import app
+from app import app, DAO
 from app.DAO import transacao
 from app.forms import LoginForm, RegistrationForm
 from app.models import User
@@ -12,17 +12,9 @@ from app.models import User
 @app.route('/index/')
 @login_required
 def index():
-    user = {'username': 'Pedro'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'The Avengers movie is cool!'
-        }
-    ]
+    users = DAO.buscar_todos(User)
+    posts = sorted([{'author': p.author, 'body': p.body, 'hora': p.timestamp} for user in users for p in user.posts],
+                   key=lambda i: (i['hora']))
     return render_template('index.html', title='Home', posts=posts)
 
 
@@ -77,4 +69,9 @@ def register():
 @app.route('/user/<username>')
 @login_required
 def user(username):
-    pass
+    user = DAO.buscar_por_criterio_404(User, username=username)
+
+    posts = sorted([{'author': p.author, 'body': p.body, 'hora': p.timestamp} for p in user.posts],
+                   key=lambda i: (i['hora']))
+
+    return render_template('user.html', user=user, posts=posts)

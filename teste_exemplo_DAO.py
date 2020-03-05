@@ -3,10 +3,15 @@ import json
 from app import DAO
 from app.models import User, Post
 
-# user = DAO.buscar_por_criterio_bool(User, User.username == 'admin')
+# user = User(username='admin', email='admin@example.com')
+# user.set_password('admin@123')
+# user2 = User(username='marco', email='marco@example.com')
+# user2.set_password('marco@123')
+
+user = DAO.buscar_por_criterio_bool(User, User.username == 'admin')
 # print(user)
-# user2 = DAO.buscar_por_criterio(User, username='marco')
-# post = Post(body='Minha bola! hahaha')
+user2 = DAO.buscar_por_criterio(User, username='marco')
+post2 = Post(body='Minha bola! hahaha')
 # user2.posts.append(post)
 # DAO.transacao(user2)
 # print(user2)
@@ -29,16 +34,19 @@ from app.models import User, Post
 #     DAO.deletar(x)
 #
 # post = Post(body='Ola a todos!')
-# print(post)
 # user2.posts.append(post)
-# post2 = Post(body='Hi!')
-# user2.posts.append(post2)
 # post3 = Post(body='vtnc')
 # user.posts.append(post3)
-# user.posts.append(post)
-# DAO.transacao(user)
-# DAO.transacao(user2)
+# post2 = Post(body='Hi!')
+# user2.posts.append(post2)
+post = Post(body='O que rola?')
+user.posts.append(post)
+user2.posts.append(post2)
+DAO.transacao(user)
+DAO.transacao(user2)
 
 # user = DAO.buscar_por_criterio_404(User, username='admin')
 # posts = json.dumps([{'author': p.author.username, 'body': p.body} for p in user.posts])
 # print(posts)
+
+
